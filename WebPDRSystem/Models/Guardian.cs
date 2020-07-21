@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebPDRSystem.Models
 {
@@ -12,41 +10,22 @@ namespace WebPDRSystem.Models
             Pdr = new HashSet<Pdr>();
         }
 
-        [Key]
         public int Id { get; set; }
-        [Required]
-        [StringLength(255)]
         public string Firstname { get; set; }
-        [StringLength(255)]
         public string Middlename { get; set; }
-        [Required]
-        [StringLength(255)]
         public string Lastname { get; set; }
-        [Required]
-        [StringLength(255)]
-        [MinLength(11)]
         public string ContactNumber { get; set; }
         public int? Barangay { get; set; }
         public int Muncity { get; set; }
         public int Province { get; set; }
-        [StringLength(255)]
         public string Address { get; set; }
-        [Required]
-        [StringLength(100)]
         public string Relationship { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        [ForeignKey(nameof(Barangay))]
-        [InverseProperty("Guardian")]
         public virtual Barangay BarangayNavigation { get; set; }
-        [ForeignKey(nameof(Muncity))]
-        [InverseProperty("Guardian")]
         public virtual Muncity MuncityNavigation { get; set; }
-        [ForeignKey(nameof(Province))]
-        [InverseProperty("Guardian")]
         public virtual Province ProvinceNavigation { get; set; }
-        [InverseProperty("GuardianNavigation")]
         public virtual ICollection<Pdr> Pdr { get; set; }
     }
 }
