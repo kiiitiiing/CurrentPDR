@@ -22,8 +22,8 @@ namespace WebPDRSystem.Models
         [Required]
         [StringLength(255)]
         public string Lastname { get; set; }
-        [StringLength(255)]
         [Required]
+        [StringLength(255)]
         [MinLength(11)]
         public string ContactNumber { get; set; }
         public int? Barangay { get; set; }
@@ -31,6 +31,9 @@ namespace WebPDRSystem.Models
         public int Province { get; set; }
         [StringLength(255)]
         public string Address { get; set; }
+        [Required]
+        [StringLength(100)]
+        public string Relationship { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 

@@ -43,6 +43,7 @@ namespace WebPDRSystem.Models
         public bool? MayGoHome { get; set; }
         public string FoodRestrictionsAllergy { get; set; }
         public string AdmissionTemperature { get; set; }
+        public bool AdmittedSotto { get; set; }
         public int? InterviewedBy { get; set; }
         [StringLength(20)]
         public string Status { get; set; }

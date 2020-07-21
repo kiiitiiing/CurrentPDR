@@ -159,7 +159,7 @@ namespace WebPDRSystem.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> NewUser([Bind("Id,Username,Password,Firstname,Middlename,Lastname,Initials,Role,PhotoString,PhotoFilePath")] AddUser newUser)
+        public async Task<IActionResult> NewUser([Bind("Id,Username,Password,Firstname,Middlename,Lastname,Initials,Role,Facility,PhotoString,PhotoFilePath")] AddUser newUser)
         {
             newUser.Username = newUser.Firstname + newUser.Lastname + DateTime.Now.ToString("ddMMyyyyHHmmss");
             newUser.Password = newUser.Firstname + newUser.Lastname + DateTime.Now.ToString("ddMMyyyyHHmmss");
@@ -187,7 +187,7 @@ namespace WebPDRSystem.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Username,Password,Firstname,Middlename,Lastname,Role,PhotoString,PhotoFilePath")] AddUser newUser)
+        public async Task<IActionResult> Create([Bind("Id,Username,Password,Firstname,Middlename,Lastname,Role,Facility,PhotoString,PhotoFilePath")] AddUser newUser)
         {
             if (ModelState.IsValid)
             {
@@ -255,7 +255,7 @@ namespace WebPDRSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ViewUser( [Bind("Id,Firstname,Middlename,Lastname,Initials,Role,PhotoString,PhotoFilePath")]AddUser pdrusers)
+        public async Task<IActionResult> ViewUser(AddUser pdrusers)
         {
             if (ModelState.IsValid)
             {
@@ -361,6 +361,7 @@ namespace WebPDRSystem.Controllers
             user.Initials = model.Initials;
             user.Picture = SavePicture(model.Firstname + model.Lastname, model.PhotoString);
             user.Role = model.Role;
+            user.Facility = model.Facility;
             user.Designation = SetDesignation(model.Role);
             user.UpdatedAt = DateTime.Now;
 
@@ -401,6 +402,7 @@ namespace WebPDRSystem.Controllers
                 Picture = SavePicture(model.Firstname + model.Lastname, model.PhotoString),
                 Team = null,
                 Role = model.Role,
+                Facility = model.Facility,
                 Designation = SetDesignation(model.Role),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now

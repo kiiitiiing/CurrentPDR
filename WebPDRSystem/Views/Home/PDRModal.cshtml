@@ -1,18 +1,17 @@
 ﻿@model Pdr
 
-@{ 
-    
+@{
+
 }
 
 <style>
-    .row{
+    .row {
         padding: 4px;
     }
 
-    .cur-pic{
+    .cur-pic {
         object-fit: cover;
     }
-
 </style>
 
 <div class="modal fade" id="pdr-modal" style="font-size: 14px; font-weight:500;">
@@ -83,7 +82,11 @@
                                 </div>
                                 <div class="col-sm-6">
                                     Quarantine facility:
-                                    <input type="text" class="form-control" asp-for="QuarantineFacility" title="Quarantine Facilty" placeholder="Quarantine Facility" />
+                                    <select class="form-control" asp-for="QuarantineFacility" title="Quarantine Facilty" placeholder="Quarantine Facility">
+                                        <option value="">Select Facility</option>
+                                        <option value="SHS Covid center">SHS Covid center</option>
+                                        <option value="IEC Covid center">IEC Covid center</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -130,6 +133,18 @@
                                     <label for="male">Female</label>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    Blood Type
+                                    <select class="form-control" asp-for="PatientNavigation.BloodType" asp-items="ViewBag.BloodTypes" title="Patient age">
+                                        <option value="">Blood Type</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    Contact Number
+                                    <input asp-for="PatientNavigation.ContactNumber" class="form-control" />
+                                </div>
+                            </div>
                             <!-- ADDRESS -->
                             <div class="row">
                                 <div class="col-sm-4">
@@ -157,9 +172,15 @@
                                     Contact number:
                                     <input type="text" class="form-control" asp-for="PatientNavigation.ContactNumber" />
                                 </div>
-                                <div class="col-sm-8">
+                                <div class="col-sm-4">
                                     Address:
                                     <input type="text" class="form-control" asp-for="PatientNavigation.Address" placeholder="Village/Subdivision/Street/Block number" />
+                                </div>
+                                <div class="col-sm-4">
+                                    Civil Status:
+                                    <select class="form-control" asp-for="PatientNavigation.CivilStatus" asp-items="ViewBag.CivilStatus">
+                                        <option value="">Civil Status</option>
+                                    </select>
                                 </div>
                             </div>
                             <!-- ADDRESS -->
@@ -199,25 +220,29 @@
                                     <input type="text" class="form-control" asp-for="GuardianNavigation.Lastname" title="Guardian last name" placeholder="Last Name" />
                                 </div>
                                 <div class="col-sm-3">
-                                    Contact number:
-                                    <input type="text" class="form-control" asp-for="GuardianNavigation.ContactNumber" title="Guardian contact number" placeholder="Contact Number" />
+                                    Relationship with Patient:
+                                    <input type="text" class="form-control" asp-for="GuardianNavigation.Relationship" title="Guardian relationship with patient" placeholder="Relationship" />
                                 </div>
                             </div>
                             <!-- GUARDIAN ADDRESS -->
                             <div class="row">
                                 <input asp-for="GuardianNavigation.Province" value="2" type="hidden" />
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
+                                    Contact number:
+                                    <input type="text" class="form-control" asp-for="GuardianNavigation.ContactNumber" title="Guardian contact number" placeholder="Contact Number" />
+                                </div>
+                                <div class="col-sm-3">
                                     Province:
                                     <select asp-for="GuardianNavigation.Province" id="guardianProvince" asp-items="ViewBag.ProvincesG" title="Guardian province" class="form-control" style="padding:5px" disabled>
                                     </select>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     City/Municipality:
                                     <select id="guardian_muncity" asp-for="GuardianNavigation.Muncity" asp-items="ViewBag.MuncityG" title="Guardian City/Municipality" class="form-control" style="padding:5px" onchange="SetBarangay('2');">
                                         <option>Select City/Municipaliy</option>
                                     </select>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     Barangay:
                                     <select id="guardian_barangay" asp-for="GuardianNavigation.Barangay" asp-items="ViewBag.BarangayG" title="Guardian Barangay" class="form-control" style="padding:5px">
                                         <option>Select Barangay</option>
@@ -250,6 +275,17 @@
                                 <div class="col-sm-4">
                                     Adimission Temperature:
                                     <input class="form-control" style="font-size:medium;" type="text" asp-for="AdmissionTemperature" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Admitted in VSMMC?</label>
+                                    <div class="row">
+                                        <input type="radio" id="yes" asp-for="AdmittedSotto" value="true" checked />
+                                        <label for="yes"> Yes</label>
+                                        <input type="radio" id="no" asp-for="AdmittedSotto" value="false" />
+                                        <label for="no"> No</label>
+                                    </div>
                                 </div>
                             </div>
                             <!-- text areas -->
@@ -291,7 +327,7 @@
                                     <textarea class="form-control" asp-for="SymptomsContacts.SymptomsOfPatient" rows="3"></textarea>
                                 </div>
                             </div>
-                            @if(ViewBag.Errors != null)
+                            @if (ViewBag.Errors != null)
                             {
                                 <div class="row">
                                     <div class="col-sm-12 center" style="align-content:center">

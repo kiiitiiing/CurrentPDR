@@ -96,7 +96,7 @@ namespace WebPDRSystem
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=dashboard}/{id?}");
+                    pattern: "/{controller=Home}/{action=dashboard}/{id?}");
             });
         }
     }

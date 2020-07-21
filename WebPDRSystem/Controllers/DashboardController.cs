@@ -9,6 +9,7 @@ using WebPDRSystem.Models.ViewModels;
 using WebPDRSystem.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using static WebPDRSystem.Controllers.HomeController;
+using System.Security.Claims;
 
 namespace WebPDRSystem.Controllers
 {
@@ -38,13 +39,16 @@ namespace WebPDRSystem.Controllers
 
             var pdr = await _context.Pdr
                 .Include(x=>x.PatientNavigation)
+                .Where(x=>x.QuarantineFacility == UserFacility)
                 .Where(x => x.Status == "admitted" && x.BedNumber != "").ToListAsync();
+
+            var total = UserFacility == "IEC Covid center" ? 130 : 48;
 
             var census = new DashboardModel
             {
                 TotalCensus = pdr.Count(),
-                CurrBedOccupancy = await _context.Pdr.Where(x => x.Status == "admitted").CountAsync(),
-                TotalBedOccupancy = 48,
+                CurrBedOccupancy = pdr.Where(x => x.Status == "admitted").Count(),
+                TotalBedOccupancy = total,
                 CoMorbidities = today != null ? (int)today.Comorbidities : 0,
                 MaleCtr = pdr.Where(x => x.PatientNavigation.Gender == true).Count(),
                 FemaleCtr = pdr.Where(x => x.PatientNavigation.Gender == false).Count(),
@@ -119,5 +123,8 @@ namespace WebPDRSystem.Controllers
             return PartialView(pdr);
         }
 
+
+
+        public string UserFacility => User.FindFirstValue("Facility");
     }
 }

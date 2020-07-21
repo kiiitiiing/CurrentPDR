@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using RequestSizeLimitAttribute = WebPDRSystem.Helpers.RequestSizeLimitAttribute;
 using WebPDRSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace WebPDRSystem.Controllers
 {
@@ -38,40 +39,87 @@ namespace WebPDRSystem.Controllers
             public int Id { get; set; }
             public string DateChecked { get; set; }
         }
+        public static List<KeyValuePair<string, string>> BloodTypes
+        {
+            get
+            {
+                return new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("O+","O+"),
+                    new KeyValuePair<string, string>("O-","O-"),
+                    new KeyValuePair<string, string>("A+","A+"),
+                    new KeyValuePair<string, string>("A-","A-"),
+                    new KeyValuePair<string, string>("B+","B+"),
+                    new KeyValuePair<string, string>("B-","B-"),
+                    new KeyValuePair<string, string>("AB+","AB+"),
+                    new KeyValuePair<string, string>("AB-","AB-"),
+                };
+            }
+        }
 
-        
+        public static List<KeyValuePair<string, string>> CivilStatus
+        {
+            get
+            {
+                return new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("single","Single"),
+                    new KeyValuePair<string, string>("married","Married"),
+                    new KeyValuePair<string, string>("divorced","Divorced"),
+                    new KeyValuePair<string, string>("separated","Separated"),
+                    new KeyValuePair<string, string>("widowed","Widowed")
+                };
+            }
+        }
+
 
         #region DASHBOARD
 
-
-        public IActionResult Dashboard()
+        [HttpGet]
+        [Route("Home/PatientsJson")]
+        [Route("Home/PatientsJson/{q}")]
+        public async Task<ActionResult<IEnumerable<PdrLessModel>>> PatientsJson(string q)
         {
-            return View();
-        }
-        public async Task<IActionResult> DashboardPartial(string search, int? page)
-        {
-            ViewBag.SearchFilter = search;
-
-            var pdrs = _context.Pdr
+            var pdrs = await _context.Pdr
                 .Where(x => x.Status == "admitted")
                 .Include(x => x.PatientNavigation).ThenInclude(x => x.MuncityNavigation)
                 .Include(x => x.PatientNavigation).ThenInclude(x => x.Medications)
                 .Include(x => x.SymptomsContacts)
                 .Include(x => x.Qnform)
                 .Include(x => x.Qdform)
-                .OrderByDescending(x => x.CreatedAt)
-                .AsQueryable();
+                .Where(x => x.QuarantineFacility == UserFacility)
+                .OrderBy(x => x.CaseNumber)
+                .Select(x => new PdrLessModel
+                {
+                    Id = x.Id,
+                    BedNo = x.BedNumber,
+                    CaseNo = x.CaseNumber,  
+                    Name = x.PatientNavigation.GetFullName(),
+                    Age = x.PatientNavigation.DateOfBirth.ComputeAge(),
+                    Muncity = x.PatientNavigation.MuncityNavigation.Description,
+                    Compaints = x.SymptomsContacts.SymptomsOfPatient,
+                    Sex = x.PatientNavigation.Gender ? "Male" : "Female",
+                    AdmissionDate = x.DateOfAdmission,
+                    Attended = x.Attended
+                })
+                .ToListAsync();
 
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrEmpty(q))
             {
-                pdrs = pdrs.Where(x => x.PatientNavigation.Firstname.Contains(search) || x.PatientNavigation.Lastname.Contains(search));
+                pdrs = pdrs.Where(x => x.Name.Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
-            ViewBag.Total = pdrs.Count();
+            return pdrs;
+        }
 
-            int size = 5;
-
-            return PartialView(PaginatedList<Pdr>.CreateAsync(await pdrs.ToListAsync(), page ?? 1, size));
+        public IActionResult Dashboard()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult DashboardPartial([FromBody] IEnumerable<PdrLessModel> model)
+        {
+            return PartialView(model);
         }
 
         #endregion
@@ -378,6 +426,8 @@ namespace WebPDRSystem.Controllers
                 .Include(x => x.SymptomsContacts).SingleOrDefaultAsync(x => x.Id == pdrId);
 
 
+            ViewBag.CivilStatus = new SelectList(CivilStatus, "Key", "Value");
+            ViewBag.BloodTypes = new SelectList(BloodTypes, "Key", "Value");
             ViewBag.ProvincesP = new SelectList(_context.Province, "Id", "Description", pdr.PatientNavigation.Province);
             ViewBag.MuncityP = new SelectList(_context.Muncity.Where(x => x.ProvinceId == pdr.PatientNavigation.Province), "Id", "Description", pdr.PatientNavigation.Muncity);
             ViewBag.BarangayP = new SelectList(_context.Barangay.Where(x => x.ProvinceId == pdr.PatientNavigation.Province && x.MuncityId == pdr.PatientNavigation.Muncity), "Id", "Description", pdr.PatientNavigation.Barangay);
@@ -426,6 +476,8 @@ namespace WebPDRSystem.Controllers
                 return RedirectToAction(nameof(Dashboard));
             }
 
+            ViewBag.CivilStatus = new SelectList(CivilStatus, "Key", "Value");
+            ViewBag.BloodTypes = new SelectList(BloodTypes, "Key", "Value");
             ViewBag.ProvincesP = new SelectList(_context.Province, "Id", "Description", model.PatientNavigation.Province);
             ViewBag.MuncityP = new SelectList(_context.Muncity.Where(x => x.ProvinceId == model.PatientNavigation.Province), "Id", "Description", model.PatientNavigation.Muncity);
             //ViewBag.BarangayP = new SelectList(_context.Barangay.Where(x => x.ProvinceId == model.PatientNavigation.Province && x.MuncityId == model.PatientNavigation.Muncity), "Id", "Description", model.PatientNavigation.Barangay);
@@ -452,6 +504,8 @@ namespace WebPDRSystem.Controllers
 
         public IActionResult AddPatient()
         {
+            ViewBag.CivilStatus = new SelectList(CivilStatus, "Key", "Value");
+            ViewBag.BloodTypes = new SelectList(BloodTypes, "Key", "Value");
             ViewBag.Users = new SelectList(GetDocNurse(), "Id", "Fullname");
             ViewBag.ProvincesP = new SelectList(_context.Province, "Id", "Description", 2);
             ViewBag.MuncityP = new SelectList(_context.Muncity.Where(x => x.ProvinceId == 2), "Id", "Description");
@@ -498,6 +552,8 @@ namespace WebPDRSystem.Controllers
             {
                 ViewBag.BarangayG = new SelectList(_context.Barangay.Where(x => x.ProvinceId == model.GuardianNavigation.Province && x.MuncityId == model.GuardianNavigation.Muncity), "Id", "Description", model.GuardianNavigation.Barangay);
             }
+            ViewBag.CivilStatus = new SelectList(CivilStatus, "Key", "Value");
+            ViewBag.BloodTypes = new SelectList(BloodTypes, "Key", "Value");
             ViewBag.Errors = errors;
             return View(model);
         }
@@ -637,6 +693,7 @@ namespace WebPDRSystem.Controllers
         public List<SelectUsers> GetDoctors()
         {
             var users = _context.Pdrusers
+                .Where(x => x.Facility == UserFacility)
                 .Where(x => x.Team == 1 && x.Role == "Doctor")
                 .Select(x => new SelectUsers
                 {
@@ -650,6 +707,7 @@ namespace WebPDRSystem.Controllers
         public List<SelectUsers> Gethcb()
         {
             var users = _context.Pdrusers
+                .Where(x => x.Facility == UserFacility)
                 .Where(x => x.Team == 1 && x.Role == "Healthcare Buddy")
                 .Select(x => new SelectUsers
                 {
@@ -701,6 +759,7 @@ namespace WebPDRSystem.Controllers
         public List<SelectUsers> GetNurses()
         {
             var users = _context.Pdrusers
+                .Where(x => x.Facility == UserFacility)
                 .Where(x => x.Team == 1 && x.Role == "Nurse")
                 .Select(x => new SelectUsers
                 {
@@ -714,6 +773,7 @@ namespace WebPDRSystem.Controllers
         public List<SelectUsers> GetDocNurse()
         {
             var users = _context.Pdrusers
+                .Where(x=>x.Facility == UserFacility)
                 .Where(x => x.Team == 1 && x.Role != "Healthcare Buddy")
                 .Select(x => new SelectUsers
                 {
@@ -723,6 +783,9 @@ namespace WebPDRSystem.Controllers
 
             return users.ToList();
         }
+
+
+        public string UserFacility => User.FindFirstValue("Facility");
         #endregion
     }
 }

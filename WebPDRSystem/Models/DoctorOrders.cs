@@ -6,8 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace WebPDRSystem.Models
 {
     public partial class DoctorOrders
-    {
-        /*public DoctorOrders()
+    {/*
+        public DoctorOrders()
         {
             ListDocOrders = new HashSet<ListDocOrders>();
         }*/

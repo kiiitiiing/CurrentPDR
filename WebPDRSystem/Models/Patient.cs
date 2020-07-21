@@ -28,8 +28,10 @@ namespace WebPDRSystem.Models
         public int Age { get; set; }
         public bool Gender { get; set; }
         [Required]
+        [StringLength(10)]
+        public string BloodType { get; set; }
+        [Required]
         [StringLength(255)]
-        [MinLength(11)]
         public string ContactNumber { get; set; }
         public int? Barangay { get; set; }
         public int Muncity { get; set; }
@@ -38,6 +40,9 @@ namespace WebPDRSystem.Models
         public string Address { get; set; }
         [StringLength(255)]
         public string Occupation { get; set; }
+        [Required]
+        [StringLength(255)]
+        public string CivilStatus { get; set; }
         [StringLength(50)]
         public string Nationality { get; set; }
         [StringLength(50)]

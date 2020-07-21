@@ -66,14 +66,14 @@ namespace WebPDRSystem.Controllers
         {
             var nurse = new Pdrusers
             {
-                Username = "covidcenter_doctor",
+                Username = "covidcenter_shs_doctor",
                 Password = "covid19_docpassword",
                 Firstname = "Covid Center",
                 Middlename = "19",
                 Lastname = "Doctor",
                 Role = "Doctor",
                 Designation = "nursedoc",
-                Facility = null,
+                Facility = "SHS Covid Center",
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
@@ -94,14 +94,14 @@ namespace WebPDRSystem.Controllers
         {
             var nurse = new Pdrusers
             {
-                Username = "covidcenter_nurse",
+                Username = "covidcenter_shs_nurse",
                 Password = "cc_nursepassword",
                 Firstname = "Covid Center",
                 Middlename = "19",
                 Lastname = "Nurse",
                 Role = "Nurse",
                 Designation = "nursedoc",
-                Facility = null,
+                Facility = "SHS Covid Center",
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
@@ -162,7 +162,7 @@ namespace WebPDRSystem.Controllers
                 }
                 else if (User.FindFirstValue(ClaimTypes.Role).Equals("resuhems"))
                 {
-                    return RedirectToAction("Index", "Resuhems");
+                    return RedirectToAction("AddPatient", "Resuhems");
                 }
                 else
                     return NotFound();
@@ -307,7 +307,8 @@ namespace WebPDRSystem.Controllers
                 new Claim(ClaimTypes.GivenName, user.Firstname),
                 new Claim(ClaimTypes.Surname, user.Lastname),
                 new Claim(ClaimTypes.Role, user.Designation),
-                new Claim("Position", user.Role)
+                new Claim("Position", user.Role),
+                new Claim("Facility", user.Facility)
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

@@ -1,24 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Keith\\Desktop\\doh\\WebPDRSystem\\WebPDRSystem\\WebPDRSystem.csproj": {}
+    "C:\\Users\\DOH\\Source\\Repos\\kiiitiiing\\WebPDRSystem\\WebPDRSystem\\WebPDRSystem.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Keith\\Desktop\\doh\\WebPDRSystem\\WebPDRSystem\\WebPDRSystem.csproj": {
+    "C:\\Users\\DOH\\Source\\Repos\\kiiitiiing\\WebPDRSystem\\WebPDRSystem\\WebPDRSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Keith\\Desktop\\doh\\WebPDRSystem\\WebPDRSystem\\WebPDRSystem.csproj",
+        "projectUniqueName": "C:\\Users\\DOH\\Source\\Repos\\kiiitiiing\\WebPDRSystem\\WebPDRSystem\\WebPDRSystem.csproj",
         "projectName": "WebPDRSystem",
-        "projectPath": "C:\\Users\\Keith\\Desktop\\doh\\WebPDRSystem\\WebPDRSystem\\WebPDRSystem.csproj",
-        "packagesPath": "C:\\Users\\Keith\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Keith\\Desktop\\doh\\WebPDRSystem\\WebPDRSystem\\obj\\",
+        "projectPath": "C:\\Users\\DOH\\Source\\Repos\\kiiitiiing\\WebPDRSystem\\WebPDRSystem\\WebPDRSystem.csproj",
+        "packagesPath": "C:\\Users\\DOH\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\DOH\\Source\\Repos\\kiiitiiing\\WebPDRSystem\\WebPDRSystem\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "E:\\Microsoft\\Xamarin\\NuGet\\",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\Keith\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\DOH\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
@@ -27,7 +26,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "http://packagesource": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -93,7 +91,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
         }
       }
     }

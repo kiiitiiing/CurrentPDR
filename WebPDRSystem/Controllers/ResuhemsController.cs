@@ -9,6 +9,8 @@ using WebPDRSystem.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using RequestSizeLimitAttribute = WebPDRSystem.Helpers.RequestSizeLimitAttribute;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using WebPDRSystem.Models.ViewModels;
 
 namespace WebPDRSystem.Controllers
 {
@@ -19,26 +21,94 @@ namespace WebPDRSystem.Controllers
         private const uint V = 2147483648;
         private readonly WebPDRContext _context;
 
-        public ResuhemsController( WebPDRContext context)
+        public ResuhemsController(WebPDRContext context)
         {
             _context = context;
         }
-        public async Task<IActionResult> Index()
+
+        public static List<KeyValuePair<string, string>> BloodTypes
         {
-            var patients = await _context.Pdr
-                .Include(x => x.PatientNavigation).ThenInclude(x => x.BarangayNavigation)
-                .Include(x => x.PatientNavigation).ThenInclude(x => x.MuncityNavigation)
-                .Include(x => x.PatientNavigation).ThenInclude(x => x.ProvinceNavigation)
-                .Include(x => x.GuardianNavigation)
-                .Where(x => x.Status == "Admitted")
-                .OrderByDescending(x => x.CreatedAt)
+            get
+            {
+                return new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("O+","O+"),
+                    new KeyValuePair<string, string>("O-","O-"),
+                    new KeyValuePair<string, string>("A+","A+"),
+                    new KeyValuePair<string, string>("A-","A-"),
+                    new KeyValuePair<string, string>("B+","B+"),
+                    new KeyValuePair<string, string>("B-","B-"),
+                    new KeyValuePair<string, string>("AB+","AB+"),
+                    new KeyValuePair<string, string>("AB-","AB-"),
+                };
+            }
+        }
+
+        public static List<KeyValuePair<string, string>> CivilStatus
+        {
+            get
+            {
+                return new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("single","Single"),
+                    new KeyValuePair<string, string>("married","Married"),
+                    new KeyValuePair<string, string>("divorced","Divorced"),
+                    new KeyValuePair<string, string>("separated","Separated"),
+                    new KeyValuePair<string, string>("widowed","Widowed")
+                };
+            }
+        }
+
+        #region INDEXES
+        [HttpGet]
+        [Route("Resuhems/PatientsJson")]
+        [Route("Resuhems/PatientsJson/{q}")]
+        public async Task<ActionResult<IEnumerable<ResuPatientsModel>>> PatientsJson(string q)
+        {
+            var pdrs = await _context.Pdr
+                .Include(z => z.PatientNavigation).ThenInclude(z => z.BarangayNavigation)
+                .Include(z => z.PatientNavigation).ThenInclude(z => z.MuncityNavigation)
+                .Include(y => y.PatientNavigation).ThenInclude(y => y.ProvinceNavigation)
+                .Include(x=>x.GuardianNavigation)
+                .Select(x=> new ResuPatientsModel
+                {
+                    Name = x.PatientNavigation.GetFullName(),
+                    Age = x.PatientNavigation.DateOfBirth.ComputeAge(),
+                    Sex = x.PatientNavigation.Gender? "Male" : "Female",
+                    DoB = x.PatientNavigation.DateOfBirth,
+                    Address = x.PatientNavigation.GetAddress(),
+                    Guardian = x.GuardianNavigation.GetFullName(),
+                    DateAdmitted = x.DateOfAdmission,
+                    GuardianContactNo = x.GuardianNavigation.ContactNumber,
+                    PatientContactNo = x.PatientNavigation.ContactNumber
+                })
+                .OrderByDescending(x => x.DateAdmitted)
                 .ToListAsync();
 
-            return View(patients);
+            if (!string.IsNullOrEmpty(q))
+            {
+                pdrs = pdrs.Where(x => x.Name.Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            return pdrs;
         }
+
+        public IActionResult Dashboard()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult DashboardPartial([FromBody] IEnumerable<ResuPatientsModel> model)
+        {
+            return PartialView(model);
+        }
+        #endregion
+        #region ADD PATIENT
 
         public IActionResult AddPatient()
         {
+            ViewBag.CivilStatus = new SelectList(CivilStatus, "Key", "Value");
+            ViewBag.BloodTypes = new SelectList(BloodTypes, "Key", "Value");
             ViewBag.Users = new SelectList(GetDocNurse(), "Id", "Fullname");
             ViewBag.ProvincesP = new SelectList(_context.Province, "Id", "Description", 2);
             ViewBag.MuncityP = new SelectList(_context.Muncity.Where(x => x.ProvinceId == 2), "Id", "Description");
@@ -70,7 +140,7 @@ namespace WebPDRSystem.Controllers
             {
                 _context.Add(model);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index),model);
+                return RedirectToAction(nameof(Dashboard));
             }
             ViewBag.ProvincesP = new SelectList(_context.Province, "Id", "Description", model.PatientNavigation.Province);
             ViewBag.MuncityP = new SelectList(_context.Muncity.Where(x => x.ProvinceId == 2), "Id", "Description", model.PatientNavigation.Muncity);
@@ -85,10 +155,14 @@ namespace WebPDRSystem.Controllers
             {
                 ViewBag.BarangayG = new SelectList(_context.Barangay.Where(x => x.ProvinceId == model.GuardianNavigation.Province && x.MuncityId == model.GuardianNavigation.Muncity), "Id", "Description", model.GuardianNavigation.Barangay);
             }
+            ViewBag.CivilStatus = new SelectList(CivilStatus, "Key", "Value");
+            ViewBag.BloodTypes = new SelectList(BloodTypes, "Key", "Value");
             ViewBag.Errors = errors;
             return View(model);
         }
 
+        #endregion
+        #region DISCHARGE
         public async Task<IActionResult> DischargedPatients(string search)
         {
             var patients = await _context.Pdr
@@ -101,7 +175,10 @@ namespace WebPDRSystem.Controllers
 
             return View(patients);
         }
+        #endregion
 
+
+        #region HELPERS
 
         public partial class SelectUsers
         {
@@ -145,5 +222,7 @@ namespace WebPDRSystem.Controllers
 
             return users.ToList();
         }
+        public string UserFacility => User.FindFirstValue("Facility");
+        #endregion
     }
 }

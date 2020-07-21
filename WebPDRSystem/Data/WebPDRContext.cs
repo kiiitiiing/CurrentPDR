@@ -43,7 +43,7 @@ namespace WebPDRSystem.Data
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=ROCKY\\SQLEXPRESS;Initial Catalog=PDRSDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+                optionsBuilder.UseSqlServer("Data Source=DESKTOP-T0HC4BP;Initial Catalog=PDRDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
             }
         }
 
@@ -58,6 +58,16 @@ namespace WebPDRSystem.Data
 
             modelBuilder.Entity<Census>(entity =>
             {
+                entity.HasIndex(e => e.Noda);
+
+                entity.HasIndex(e => e.Nodb);
+
+                entity.HasIndex(e => e.Odg);
+
+                entity.HasIndex(e => e.Odr);
+
+                entity.HasIndex(e => e.Qd);
+
                 entity.HasOne(d => d.NodaNavigation)
                     .WithMany(p => p.CensusNodaNavigation)
                     .HasForeignKey(d => d.Noda)
@@ -91,6 +101,8 @@ namespace WebPDRSystem.Data
 
             modelBuilder.Entity<Discharge>(entity =>
             {
+                entity.HasIndex(e => e.DischargedBy);
+
                 entity.HasIndex(e => e.HealthCareBuddy);
 
                 entity.HasIndex(e => e.Pdrid);
@@ -122,6 +134,10 @@ namespace WebPDRSystem.Data
 
             modelBuilder.Entity<DoctorOrders>(entity =>
             {
+                entity.HasIndex(e => e.PdrId);
+
+                entity.HasIndex(e => e.Signature);
+
                 entity.HasOne(d => d.Pdr)
                     .WithMany(p => p.DoctorOrders)
                     .HasForeignKey(d => d.PdrId)
@@ -136,6 +152,12 @@ namespace WebPDRSystem.Data
 
             modelBuilder.Entity<Guardian>(entity =>
             {
+                entity.HasIndex(e => e.Barangay);
+
+                entity.HasIndex(e => e.Muncity);
+
+                entity.HasIndex(e => e.Province);
+
                 entity.Property(e => e.Address).IsUnicode(false);
 
                 entity.Property(e => e.ContactNumber).IsUnicode(false);
@@ -145,6 +167,8 @@ namespace WebPDRSystem.Data
                 entity.Property(e => e.Lastname).IsUnicode(false);
 
                 entity.Property(e => e.Middlename).IsUnicode(false);
+
+                entity.Property(e => e.Relationship).IsUnicode(false);
 
                 entity.HasOne(d => d.BarangayNavigation)
                     .WithMany(p => p.Guardian)
@@ -166,6 +190,10 @@ namespace WebPDRSystem.Data
 
             modelBuilder.Entity<LabResult>(entity =>
             {
+                entity.HasIndex(e => e.AttendingPhysician);
+
+                entity.HasIndex(e => e.PdrId);
+
                 entity.Property(e => e.ResultPic).IsUnicode(false);
 
                 entity.HasOne(d => d.AttendingPhysicianNavigation)
@@ -183,6 +211,8 @@ namespace WebPDRSystem.Data
 
             modelBuilder.Entity<ListDocOrders>(entity =>
             {
+                entity.HasIndex(e => e.DoctorOrderId);
+
                 entity.HasOne(d => d.DoctorOrder)
                     .WithMany(p => p.ListDocOrders)
                     .HasForeignKey(d => d.DoctorOrderId)
@@ -192,6 +222,10 @@ namespace WebPDRSystem.Data
 
             modelBuilder.Entity<Medications>(entity =>
             {
+                entity.HasIndex(e => e.PatientId);
+
+                entity.HasIndex(e => e.SignatureNurse);
+
                 entity.Property(e => e.Comments).IsUnicode(false);
 
                 entity.Property(e => e.MedName).IsUnicode(false);
@@ -225,6 +259,10 @@ namespace WebPDRSystem.Data
                 entity.HasIndex(e => e.Province);
 
                 entity.Property(e => e.Address).IsUnicode(false);
+
+                entity.Property(e => e.BloodType).IsUnicode(false);
+
+                entity.Property(e => e.CivilStatus).IsUnicode(false);
 
                 entity.Property(e => e.ContactNumber).IsUnicode(false);
 
@@ -264,6 +302,8 @@ namespace WebPDRSystem.Data
             {
                 entity.HasIndex(e => e.Guardian);
 
+                entity.HasIndex(e => e.InterviewedBy);
+
                 entity.HasIndex(e => e.Patient);
 
                 entity.HasIndex(e => e.SymptomsContactsId);
@@ -300,8 +340,6 @@ namespace WebPDRSystem.Data
             modelBuilder.Entity<Pdrusers>(entity =>
             {
                 entity.HasIndex(e => e.Team);
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.Designation).IsUnicode(false);
 
@@ -351,6 +389,10 @@ namespace WebPDRSystem.Data
             {
                 entity.HasIndex(e => e.HealthCareBuddy);
 
+                entity.HasIndex(e => e.PdrId);
+
+                entity.HasIndex(e => e.SignatureOfQd);
+
                 entity.Property(e => e.HealthCareBuddy).IsUnicode(false);
 
                 entity.Property(e => e.Pdrcode).IsUnicode(false);
@@ -372,6 +414,10 @@ namespace WebPDRSystem.Data
 
             modelBuilder.Entity<Qnform>(entity =>
             {
+                entity.HasIndex(e => e.PdrId);
+
+                entity.HasIndex(e => e.SignatureOfQn);
+
                 entity.Property(e => e.Bp).IsUnicode(false);
 
                 entity.Property(e => e.Hgt).IsUnicode(false);
@@ -411,6 +457,8 @@ namespace WebPDRSystem.Data
             {
                 entity.HasIndex(e => e.Pdrid);
 
+                entity.HasIndex(e => e.ReferredBy);
+
                 entity.HasOne(d => d.Pdr)
                     .WithMany(p => p.Referral)
                     .HasForeignKey(d => d.Pdrid)
@@ -431,6 +479,8 @@ namespace WebPDRSystem.Data
 
             modelBuilder.Entity<Unusualities>(entity =>
             {
+                entity.HasIndex(e => e.PdrId);
+
                 entity.Property(e => e.Remarks).IsUnicode(false);
 
                 entity.Property(e => e.Status).IsUnicode(false);

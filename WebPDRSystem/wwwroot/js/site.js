@@ -10,10 +10,6 @@ $(function () {
         theme: 'bootstrap4'
     });
 
-    /*$('input').on('change', function () {
-        console.log('input changed');
-        $('input').removeClass('input-validation-error');
-    });*/
 
     var placeholderElement = $('#placeholder');
 
@@ -39,24 +35,12 @@ $(function () {
         });
     });
 
-
-    var otherdets = $('#other_details');
-    var temps = $('#temperature');
-
-    temps.click(function () {
-        console.log('sad');
-    });
-
-    otherdets.click(function () {
-        console.log('hapuattr');
-    });
-    
-
     dmf.on('click', 'button[data-save="modal"]', function (event) {
         //Showload();
         placeholderElement.empty();
         event.preventDefault();
         event.stopImmediatePropagation();
+        console.log('dmfl');
         var form = dmf.find('.modal').find('form');
         var formId = dmf.find('.modal').attr('id');
         var actionUrl = form.attr('action');
@@ -105,6 +89,7 @@ $(function () {
         //Showload();
         event.preventDefault();
         event.stopImmediatePropagation();
+        console.log('placeholder');
         var form = placeholderElement.find('.modal').find('form');
         var formId = placeholderElement.find('.modal').attr('id');
         var actionUrl = form.attr('action');
@@ -129,8 +114,8 @@ $(function () {
                     //location.reload();
                 }
                 if (formId == 'pdr-modal' || formId == 'ReferralModal' || formId == 'attention' || formId == 'QNFormModal' || formId == 'QDFormModal' || formId == 'DischargedModal') {
-                    LoadDashboard('');
-                    //location.reload();
+                    var vessel = $('#home-patients');
+                    LoadPatients('', vessel, 'Home', 'PatientsJson');
                 }
                 if (formId == 'edit-census') {
                     LoadCensus();
@@ -584,5 +569,79 @@ function SetBarangay(id) {
                 text: item.description
             }));
         });
+    });
+}
+
+//PAGINATIONS
+function LoadPatients(q, container, controller, action) {
+    //var container = $('#' + vessel);
+    var size = 10;
+    var ctr = 0;
+    var url = '/' + controller + '/' + action + '/' + q;
+    if (action == 'ActionsJson') {
+        url = '/' + controller + '/' + action + q;
+    }
+    var showArrows = true;
+    console.log(url);
+    container.pagination({
+        dataSource: function (done) {
+            $.ajax({
+                type: 'GET',
+                url: url,
+                success: function (response) {
+                    done(response);
+                    ctr = response.length;
+                }
+            });
+        },
+        locator: 'items',
+        pageSize: size,
+        ajax: {
+            beforeSend: function () {
+                var html = AddLoading();
+                container.prev().html(html);
+            }
+        },
+        callback: function (response, pagination) {
+            var action = '';
+            var controller = '';
+            if (container.attr('id') == 'home-patients') {
+                action = 'DashboardPartial';
+                controller = 'Home';
+            }
+            else if (container.attr('id') == 'patients-actions') {
+                action = 'ActivitiesPartial';
+                controller = 'Patients';
+            }
+            else if (container.attr('id') == 'admin-patients') {
+                action = 'IndexPartial';
+                controller = 'Admin';
+            }
+            else if (container.attr('id') == 'resu-patients') {
+                action = 'DashboardPartial';
+                controller = 'Resuhems';
+            }
+            $.when(CallPartialView(response, controller, action)).done(function (output) {
+                $('.total_number').html(ctr);
+                if (ctr <= size)
+                    container.hide();
+                else
+                    container.show();
+                container.prev().empty();
+                container.prev().html(output);
+            })
+        }
+    })
+}
+
+//TEMPLATES
+
+function CallPartialView(data, controller, action) {
+    return $.ajax({
+        url: "/" + controller + "/" + action,
+        type: "POST",
+        async: true,
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(data)
     });
 }

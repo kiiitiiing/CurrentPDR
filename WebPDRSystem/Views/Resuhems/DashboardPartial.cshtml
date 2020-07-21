@@ -1,0 +1,62 @@
+﻿@model IEnumerable<ResuPatientsModel>
+
+
+
+@if (Model.Count() != 0)
+{
+    <table class="table table-hover table-striped table-responsive" style="font-size: 14px;">
+        <thead>
+            <tr class="bg-gray-dark text-center align-content-center">
+                <th style="vertical-align:middle !important;">Name</th>
+                <th style="vertical-align:middle !important;">Sex</th>
+                <th style="vertical-align:middle !important;">Age</th>
+                <th style="vertical-align:middle !important;">Date of birth</th>
+                <th style="vertical-align:middle !important;">Address</th>
+                <th style="vertical-align:middle !important;">Date of Admission</th>
+                <th style="vertical-align:middle !important;">Contact #</th>
+                <th style="vertical-align:middle !important;">Guardian</th>
+                <th style="vertical-align:middle !important;">Guardian's Contact#</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.Sex
+                    </td>
+                    <td>
+                        @item.Age
+                    </td>
+                    <td>
+                        @item.DoB.ToString("MMMM d, yyyy")
+                    </td>
+                    <td>
+                        @item.Address
+                    </td>
+                    <td>
+                        @item.DateAdmitted.GetDate("MMMM d, yyyy")
+                    </td>
+                    <td>
+                        @item.PatientContactNo
+                    </td>
+                    <td>
+                        @item.Guardian
+                    </td>
+                    <td>
+                        @item.GuardianContactNo
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <tr>
+        <td colspan="5">No Patients!</td>
+    </tr>
+}
