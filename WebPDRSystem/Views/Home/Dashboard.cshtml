@@ -43,16 +43,34 @@
 
 
 <script>
+    var vessel = $('#home-patients');
+    var last = '';
     $(function () {
-        var vessel = $('#home-patients');
-        LoadPatients('', vessel, 'Home', 'PatientsJson');
-        
+        var q = [];
+        q.push('');
+        q.push('');
+        LoadPatients(q, vessel, 'Home', 'PatientsJson');
+
         $('#searchPatientBtn').on('click', function (event) {
             event.preventDefault();
             event.stopImmediatePropagation();
-            var q = $('#searchDetail').val();
-            LoadPatients(q, vessel, 'Home', 'PatientsJson');
-        }); 
+            var s = [];
+            s.push($('#searchDetail').val());
+            s.push('');
+            LoadPatients(s, vessel, 'Home', 'PatientsJson');
+        });
     })
 
+    function Sort(filter) {
+        if (last == filter) {
+            last = last + '_desc';
+        }
+        else {
+            last = filter;
+        }
+        var f = [];
+        f.push($('#searchDetail').val());
+        f.push(last);
+        LoadPatients(f, vessel, 'Home', 'PatientsJson');
+    }
 </script>

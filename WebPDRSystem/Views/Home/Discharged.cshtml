@@ -39,7 +39,18 @@
                     var gender = patient.PatientNavigation.Gender ? "Male" : "Female";
                     <tr>
                         <td class="text-center">
-                            @patient.PatientNavigation.GetFullName()
+                            <div class="btn-group dropleft" style="cursor: pointer;">
+                                <a class=" dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    @patient.PatientNavigation.GetFullName()
+                                </a>
+                                <div class="dropdown-menu" x-placement="right-start" style="position: absolute; transform: translate3d(-2px, 50px, 0px); top: 0px; left: 0px; will-change: transform; max-height: 210px; overflow-y: auto;">
+                                    <a class="dropdown-item" style="cursor: pointer;" onclick="OpenForm('@patient.Id', 'PDRModal', 'Home');">PDR</a>
+                                    <a class="dropdown-item" style="cursor: pointer;" onclick="OpenForm('@patient.Id', 'ViewOrders', 'NurseForms');">View Doctor's orders</a>
+                                    <a class="dropdown-item" style="cursor: pointer;" onclick="OpenForm('@patient.Id', 'MedicationOverview', 'NurseForms');">Meds Overview</a>
+                                    <a class="dropdown-item" style="cursor: pointer;" onclick="OpenForm('@patient.Id', 'QFNOverview', 'NurseForms');">VS Overview</a>
+                                    <a class="dropdown-item" style="cursor: pointer;" onclick="OpenForm('@patient.Id', 'QDFormOverview', 'NurseForms');">QD Form Overview</a>
+                                </div>
+                            </div>
                         </td>
                         <td class="text-center">
                             @gender

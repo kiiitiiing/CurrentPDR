@@ -123,7 +123,7 @@
                                 </div>
                                 <div class="col-sm-4">
                                     Age:
-                                    <input type="number" class="form-control" asp-for="PatientNavigation.Age" readonly />
+                                    <input type="number" id="patient_ages" class="form-control" asp-for="PatientNavigation.Age" value="@Model.PatientNavigation.DateOfBirth.ComputeAge()" readonly />
                                 </div>
                                 <div class="col-sm-4">
                                     Gender:<br />
@@ -136,7 +136,7 @@
                             <div class="row">
                                 <div class="col-sm-4">
                                     Blood Type
-                                    <select class="form-control" asp-for="PatientNavigation.BloodType" asp-items="ViewBag.BloodTypes" title="Patient age">
+                                    <select class="form-control" asp-for="PatientNavigation.BloodType" asp-items="ViewBag.BloodTypes" title="Blood type">
                                         <option value="">Blood Type</option>
                                     </select>
                                 </div>
@@ -169,12 +169,12 @@
                             <!-- PATIENT ADDRESS -->
                             <div class="row">
                                 <div class="col-sm-4">
-                                    Contact number:
-                                    <input type="text" class="form-control" asp-for="PatientNavigation.ContactNumber" />
-                                </div>
-                                <div class="col-sm-4">
                                     Address:
                                     <input type="text" class="form-control" asp-for="PatientNavigation.Address" placeholder="Village/Subdivision/Street/Block number" />
+                                </div>
+                                <div class="col-sm-4">
+                                    Occupation:
+                                    <input type="text" class="form-control" asp-for="PatientNavigation.Occupation" />
                                 </div>
                                 <div class="col-sm-4">
                                     Civil Status:
@@ -185,10 +185,6 @@
                             </div>
                             <!-- ADDRESS -->
                             <div class="row">
-                                <div class="col-sm-4">
-                                    Occupation:
-                                    <input type="text" class="form-control" asp-for="PatientNavigation.Occupation" />
-                                </div>
                                 <div class="col-sm-4">
                                     Nationality:
                                     <input type="text" class="form-control" asp-for="PatientNavigation.Nationality" />

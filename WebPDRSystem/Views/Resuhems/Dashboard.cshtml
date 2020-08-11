@@ -45,12 +45,15 @@
 <script>
     $(function () {
         var vessel = $('#resu-patients');
-        LoadPatients('', vessel, 'Resuhems', 'PatientsJson');
+        var s = [];
+        s.push('');
+        LoadPatients(s, vessel, 'Resuhems', 'PatientsJson');
 
         $('#searchPatientBtn').on('click', function (event) {
             event.preventDefault();
             event.stopImmediatePropagation();
-            var q = $('#searchDetail').val();
+            var q = [];
+            q.push($('#searchDetail').val());
             LoadPatients(q, vessel, 'Resuhems', 'PatientsJson');
         });
     })

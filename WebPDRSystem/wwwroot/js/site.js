@@ -382,10 +382,13 @@ function ChangeName(patientId, medName) {
 }
 
 function CaclAge(date) {
+    console.log(date);
     var birth = new Date(date);
     var curr = new Date();
     var diff = curr.getTime() - birth.getTime();
-    document.getElementById("PatientNavigation_Age").value = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+    var age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+    console.log(age);
+    $('#patient_age').val(age);
 }
 
 function readURL(input) {
@@ -577,9 +580,12 @@ function LoadPatients(q, container, controller, action) {
     //var container = $('#' + vessel);
     var size = 10;
     var ctr = 0;
-    var url = '/' + controller + '/' + action + '/' + q;
+    var url = '/' + controller + '/' + action + '/' + q[0]
     if (action == 'ActionsJson') {
-        url = '/' + controller + '/' + action + q;
+        url = '/' + controller + '/' + action + q[0];
+    }
+    else if (action == 'PatientsJson') {
+        url = '/' + controller + '/' + action + '?q=' + q[0] + '&sort=' + q[1];
     }
     var showArrows = true;
     console.log(url);

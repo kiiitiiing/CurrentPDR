@@ -76,10 +76,19 @@ namespace WebPDRSystem.Controllers
         #region DASHBOARD
 
         [HttpGet]
-        [Route("Home/PatientsJson")]
-        [Route("Home/PatientsJson/{q}")]
-        public async Task<ActionResult<IEnumerable<PdrLessModel>>> PatientsJson(string q)
+        public async Task<ActionResult<IEnumerable<PdrLessModel>>> PatientsJson(string q, string sort)
         {
+            if (string.IsNullOrEmpty(sort))
+            {
+                sort = "case";
+                ViewBag.Sort = sort;
+            }
+            else
+            {
+                if (ViewBag.Sort == sort)
+                    sort = sort + "_desc";
+            }
+
             var pdrs = await _context.Pdr
                 .Where(x => x.Status == "admitted")
                 .Include(x => x.PatientNavigation).ThenInclude(x => x.MuncityNavigation)
@@ -88,12 +97,11 @@ namespace WebPDRSystem.Controllers
                 .Include(x => x.Qnform)
                 .Include(x => x.Qdform)
                 .Where(x => x.QuarantineFacility == UserFacility)
-                .OrderBy(x => x.CaseNumber)
                 .Select(x => new PdrLessModel
                 {
                     Id = x.Id,
                     BedNo = x.BedNumber,
-                    CaseNo = x.CaseNumber,  
+                    CaseNo = x.CaseNumber,
                     Name = x.PatientNavigation.GetFullName(),
                     Age = x.PatientNavigation.DateOfBirth.ComputeAge(),
                     Muncity = x.PatientNavigation.MuncityNavigation.Description,
@@ -104,11 +112,49 @@ namespace WebPDRSystem.Controllers
                 })
                 .ToListAsync();
 
+
             if (!string.IsNullOrEmpty(q))
             {
                 pdrs = pdrs.Where(x => x.Name.Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
+            switch (sort)
+            {
+                case "case":
+                    {
+                        pdrs = pdrs.OrderBy(x => x.CaseNo).ToList();
+                        break;
+                    }
+
+                case "case_desc":
+                    {
+                        pdrs = pdrs.OrderByDescending(x => x.CaseNo).ToList();
+                        break;
+                    }
+                case "bed":
+                    {
+                        pdrs = pdrs.OrderBy(x => x.BedNo).ToList();
+                        break;
+                    }
+                case "bed_desc":
+                    {
+                        pdrs = pdrs.OrderByDescending(x => x.CaseNo).ToList();
+                        break;
+                    }
+                case "admission":
+                    {
+                        pdrs = pdrs.OrderBy(x => x.AdmissionDate).ToList();
+                        break;
+                    }
+                case "admission_desc":
+                    {
+                        pdrs = pdrs.OrderByDescending(x => x.AdmissionDate).ToList();
+                        break;
+                    }
+            }
+
+
+            ViewBag.Sort = sort;
             return pdrs;
         }
 
@@ -615,6 +661,7 @@ namespace WebPDRSystem.Controllers
                 .Include(x => x.PatientNavigation).ThenInclude(x => x.MuncityNavigation)
                 .Include(x => x.PatientNavigation).ThenInclude(x => x.ProvinceNavigation)
                 .Where(x => x.Status == "discharged")
+                .Where(x => x.QuarantineFacility == UserFacility)
                 .OrderByDescending(x => x.UpdatedAt)
                 .ToListAsync();
 

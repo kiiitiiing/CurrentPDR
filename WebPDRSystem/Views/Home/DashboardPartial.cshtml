@@ -11,14 +11,14 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th class="text-center">Bed #</th>
-                <th class="text-center">Case #</th>
+                <th class="text-center" style="color: blue; cursor: pointer;" onclick="Sort('bed');">Bed # <i class="fas fa-sort"></i></th>
+                <th class="text-center" style="color: blue; cursor: pointer;" onclick="Sort('case');">Case # <i class="fas fa-sort"></i></th>
                 <th class="text-center">Name </th>
                 <th class="text-center">Age </th>
                 <th class="text-center">Sex </th>
                 <th class="text-center">City/Municipality</th>
                 <th class="text-center">Chief Complaints</th>
-                <th class="text-center">Date & Time of Admission</th>
+                <th class="text-center" onclick="Sort('admission');" style="color: blue; cursor: pointer;">Date & Time of Admission <i class="fas fa-sort"></i></th>
             </tr>
         </thead>
         <tbody id="dashboard_table" style="height: 350px; overflow: auto;">
