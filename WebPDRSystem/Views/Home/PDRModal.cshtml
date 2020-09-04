@@ -1,7 +1,8 @@
 ﻿@model Pdr
 
 @{
-
+    var dateTesting = Model.DateTesting == null ? "" : Model.DateTesting.Value.ToString("MMMM dd, yyyy");
+    var dateOnset = Model.DateOnsetSymptoms == null ? "" : Model.DateOnsetSymptoms.Value.ToString("MMMM dd, yyyy");
 }
 
 <style>
@@ -42,6 +43,10 @@
                     <input type="hidden" asp-for="MayGoHome" />
                     <input type="hidden" id="imgb64" asp-for="PatientNavigation.Picture" />
                     <input type="hidden" asp-for="Attended" />
+                    <input type="hidden" asp-for="DateOfAdmission" />
+                    <input type="hidden" asp-for="PatientNavigation.DateOfBirth" />
+                    <input type="hidden" asp-for="DateTesting" />
+                    <input type="hidden" asp-for="DateOnsetSymptoms" />
                     <div class="row">
                         <div class="col-sm-3">
                             <img id="cur-pic" class=" center cur-pic" src="~/img/pdrs/@Model.PatientNavigation.Picture" onerror="this.src='/img/MDMale.jpg'" />
@@ -51,7 +56,7 @@
                         <div class="col-sm-9">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <a class="btn btn-sm btn-success" asp-controller="ToPdf" asp-action="ViewLabResults" asp-route-pdrId="@Model.Id" target="_blank">View Lab Results</a>
+                                    <a class="btn btn-sm btn-success" @*asp-controller="ToPdf" asp-action="ViewLabResults" asp-route-pdrId="@Model.Id" target="_blank" *@>View Lab Results</a>
                                 </div>
                             </div>
                             <!-- PATIENT ADMISSION INFORMATION -->
@@ -67,7 +72,7 @@
                                 </div>
                                 <div class="col-sm-6">
                                     Date of admission:
-                                    <input class="form-control" style="font-size:medium;" type="datetime-local" asp-for="DateOfAdmission" />
+                                    <input class="form-control" style="font-size:medium;" type="text" readonly value="@Model.DateOfAdmission.Value.ToString("MMMM dd, yyyy HH:mm tt")" />
                                 </div>
                                 <div class="col-sm-2">
                                     Bed #:
@@ -119,7 +124,7 @@
                             <div class="row">
                                 <div class="col-sm-4">
                                     Date of birth:
-                                    <input id="patient_dob" type="date" class="form-control" asp-for="PatientNavigation.DateOfBirth" onchange="GetDate();" />
+                                    <input id="patient_dob" type="text" class="form-control" readonly value="@Model.PatientNavigation.DateOfBirth.ToString("MMMM dd, yyyy")" onchange="GetDate();" />
                                 </div>
                                 <div class="col-sm-4">
                                     Age:
@@ -262,11 +267,11 @@
                             <div class="row">
                                 <div class="col-sm-4">
                                     Date tested:
-                                    <input class="form-control" style="font-size:medium;" type="date" asp-for="DateTesting" />
+                                    <input class="form-control" style="font-size:medium;" type="text" readonly value="@dateTesting" />
                                 </div>
                                 <div class="col-sm-4">
                                     Date of onset of symptoms:
-                                    <input class="form-control" style="font-size:medium;" type="date" asp-for="DateOnsetSymptoms" />
+                                    <input class="form-control" style="font-size:medium;" type="text" readonly value="@dateOnset" />
                                 </div>
                                 <div class="col-sm-4">
                                     Adimission Temperature:

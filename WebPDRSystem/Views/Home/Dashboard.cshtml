@@ -22,14 +22,17 @@
                                placeholder="Lastname"
                                type="text"
                                value="@ViewBag.SearchFilter" />
+
                         <button id="searchPatientBtn" type="button" class="btn btn-sm btn-success">
+
                             <i class="fa fa-search"></i>
+
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="card-body" id="list_patient">
+        <div class="card-body" id="list_patient" style="margin-bottom: 50px !important;">
             <div class="overlay d-flex justify-content-center align-items-center">
                 <i class="fas fa-2x fa-sync fa-spin"></i>
             </div>
@@ -60,7 +63,6 @@
             LoadPatients(s, vessel, 'Home', 'PatientsJson');
         });
     })
-
     function Sort(filter) {
         if (last == filter) {
             last = last + '_desc';

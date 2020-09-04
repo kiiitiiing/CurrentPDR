@@ -40,14 +40,14 @@ namespace WebPDRSystem.Controllers
         {
             var admin = new Pdrusers
             {
-                Username = "doh_resuhems",
-                Password = "D0h7_r3suh3m5",
+                Username = "doh_shs_resuhems",
+                Password = "D0h7_SHS_r3suh3m5",
                 Firstname = "RESU",
-                Middlename = "covid",
-                Lastname = "HEMS",
+                Middlename = "HEMS",
+                Lastname = "SHS",
                 Role = "resuhems",
                 Designation = "resuhems",
-                Facility = null,
+                Facility = "SHS Covid center",
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };

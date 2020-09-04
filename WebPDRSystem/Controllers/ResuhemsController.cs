@@ -70,6 +70,7 @@ namespace WebPDRSystem.Controllers
                 .Include(z => z.PatientNavigation).ThenInclude(z => z.MuncityNavigation)
                 .Include(y => y.PatientNavigation).ThenInclude(y => y.ProvinceNavigation)
                 .Include(x=>x.GuardianNavigation)
+                .Where(x=>x.QuarantineFacility == UserFacility)
                 .Select(x=> new ResuPatientsModel
                 {
                     Name = x.PatientNavigation.GetFullName(),
@@ -135,6 +136,8 @@ namespace WebPDRSystem.Controllers
             model.GuardianNavigation.UpdatedAt = DateTime.Now;
             model.Pdrcode = model.PatientNavigation.Lastname + model.PatientNavigation.Middlename + model.PatientNavigation.Firstname + model.CreatedAt.ToString("ddMMyyyyHHmm");
             model.GuardianNavigation.Address = "";
+            model.SymptomsContacts.CloseContacts = model.SymptomsContacts.CloseContacts ?? "none";
+            model.SymptomsContacts.SymptomsOfPatient = model.SymptomsContacts.SymptomsOfPatient ?? "none";
             //model.PatientNavigation.Picture = SavePicture(model.PatientNavigation.Firstname + model.PatientNavigation.Lastname, model.PatientNavigation.Picture);
             if (ModelState.IsValid)
             {
@@ -169,6 +172,7 @@ namespace WebPDRSystem.Controllers
                 .Include(x => x.PatientNavigation).ThenInclude(x => x.BarangayNavigation)
                 .Include(x => x.PatientNavigation).ThenInclude(x => x.MuncityNavigation)
                 .Include(x => x.PatientNavigation).ThenInclude(x => x.ProvinceNavigation)
+                .Where(x => x.QuarantineFacility == UserFacility)
                 .Where(x => x.Status == "discharged")
                 .OrderByDescending(x => x.UpdatedAt)
                 .ToListAsync();

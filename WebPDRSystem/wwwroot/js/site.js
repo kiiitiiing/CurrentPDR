@@ -290,6 +290,7 @@ function OpenForm(id, action, controller) {
                 success: function (data) {
                     $('body').find('#loadings').modal('toggle');
                     //Hideload();
+                    console.log(JSON.stringify(data));
                     placeholderElement.empty();
                     placeholderElement.html(data);
                     placeholderElement.find('.modal').modal('show');
@@ -454,7 +455,7 @@ function LoadMedHistory() {
 
 function AddLoading() {
     var loadi = '<div class="d-flex justify-content-center align-items-center" style="position: absolute !important; top: 1; left: 50%"><i class="fas fa-2x fa-sync fa-spin"></i></div>';
-    $('.patient-list').prepend(loadi);
+    $('.patient-list_patient').prepend(loadi);
 }
 
 function LoadDashboard(search) {
@@ -604,11 +605,16 @@ function LoadPatients(q, container, controller, action) {
         pageSize: size,
         ajax: {
             beforeSend: function () {
-                var html = AddLoading();
-                container.prev().html(html);
+                console.log('wtf');
+                var html = '<div class="d-flex justify-content-center align-items-center" style="position: absolute !important; top: 1; left: 50%"><i class="fas fa-2x fa-sync fa-spin"></i></div>';
+                $('#list_patient').empty();
+                $('#list_patient').html(html);
             }
         },
         callback: function (response, pagination) {
+            var html = '<div class="d-flex justify-content-center align-items-center" style="position: absolute !important; top: 1; left: 50%; bottom: 100 !important;"><i class="fas fa-2x fa-sync fa-spin"></i></div>';
+            $('#list_patient').empty();
+            $('#list_patient').html(html);
             var action = '';
             var controller = '';
             if (container.attr('id') == 'home-patients') {
@@ -637,7 +643,7 @@ function LoadPatients(q, container, controller, action) {
                 container.prev().html(output);
             })
         }
-    })
+    });
 }
 
 //TEMPLATES
